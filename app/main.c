@@ -33,7 +33,7 @@ void save_to_flash(uint8_t *data)
 	volatile uint32_t data_length = (strlen((char*)data_to_FLASH) / 8) + (int)((strlen((char*)data_to_FLASH) % 8) != 0);
 	volatile uint16_t pages = (strlen((char*)data) / page_size) + (int)((strlen((char*)data) % page_size) != 0);
 	
-	printf("data_len: %lu\n", data_length);
+	//printf("data_len: %lu\n", data_length);
 	
 	// unlock flash
 	HAL_FLASH_Unlock();
@@ -72,17 +72,42 @@ void save_to_flash(uint8_t *data)
 		
 }
 
+void read_flash(uint8_t* data)
+{
+	volatile uint32_t read_data;
+	volatile uint32_t read_cnt = 0;
+	
+	do
+	{
+		read_data = *(uint32_t*)(FLASH_STORAGE + read_cnt);
+		if (read_data != 0xFFFFFFFF)
+		{
+			data[read_cnt] = (uint8_t)read_data;
+			data[read_cnt + 1] = (uint8_t)(read_data >> 0x8);
+			data[read_cnt + 2] = (uint8_t)(read_data >> 0x10);
+			data[read_cnt + 3] = (uint8_t)(read_data >> 0x18);
+			read_cnt += 4;
+		}
+		
+	} while (read_data != 0xFFFFFFFF); // end of flash content
+}
+
 void azure_thread_entry(ULONG parameter)
 {
 	char testData[50];
 	
 	memset(testData, 0, sizeof(testData));
-	strcpy(testData, "Hello World");
+	strcpy(testData, "Hello World!");
 	
-	printf("%s", testData);
+	printf("%s", testData); // code no work when a print line exists, hmmmmmmm
 	
 	save_to_flash((uint8_t*)testData);	
-		
+	
+	char readData[50];
+	memset(readData, 0, sizeof(readData));
+	read_flash((uint8_t*)readData);
+	
+
     UINT status;
 
     printf("\r\nStarting Azure thread\r\n\r\n");
