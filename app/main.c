@@ -94,19 +94,26 @@ void read_flash(uint8_t* data)
 
 void azure_thread_entry(ULONG parameter)
 {
-	char testData[50];
+	char testData[256];
 	
 	memset(testData, 0, sizeof(testData));
-	strcpy(testData, "Hello World!");
+	strcpy(testData, "");
 	
 	printf("%s", testData); // code no work when a print line exists, hmmmmmmm
 	
 	save_to_flash((uint8_t*)testData);	
 	
-	char readData[50];
+	char readData[256];
 	memset(readData, 0, sizeof(readData));
 	read_flash((uint8_t*)readData);
 	
+	char hostname[128] = ""; // assuming max len of string to be 128 chars 
+    char device_id[128] = ""; // assuming max len of string to be 128 chars 
+    char primary_key[128] = ""; // assuming max len of string to be 128 chars 
+
+	const char *format = "hostname=%s device_id=%s primary_key=%s"; 
+	
+	sscanf(readData, format, hostname, device_id, primary_key);
 
     UINT status;
 
@@ -136,11 +143,18 @@ void azure_thread_entry(ULONG parameter)
     }
 
     // Enter the Azure MQTT loop
+	if(!azure_iothub_run(hostname, device_id, primary_key))
+	{
+		printf("Failed to start Azure IotHub\r\n");
+		return;
+	}
+	/*
     if(!azure_iothub_run(IOT_HUB_HOSTNAME, IOT_DEVICE_ID, IOT_PRIMARY_KEY))
     {
         printf("Failed to start Azure IotHub\r\n");
         return;
     }
+    */
 }
 
 void tx_application_define(void* first_unused_memory)
@@ -161,31 +175,6 @@ void tx_application_define(void* first_unused_memory)
         printf("Azure IoT thread creation failed\r\n");
     }
 }
-
-
-
-/*
-void read_flash(uint8_t* data)
-{
-	volatile uint32_t read_data;
-	volatile uint32_t read_cnt = 0;
-	
-	do
-	{
-		read_data = *(uint32_t*)(FLASH_STORAGE + read_cnt);
-		if (read_data != 0xFFFFFFFF)
-		{
-			data[read_cnt] = (uint8_t)read_data;
-			data[read_cnt + 1] = (uint8_t)(read_data >> 8);
-			data[read_cnt + 2] = (uint8_t)(read_data >> 16);
-			data[read_cnt + 3] = (uint8_t)(read_data >> 24);
-			read_cnt += 4;
-		}
-	} while (read_data != 0xFFFFFFFF);
-	
-	
-}
-*/
 
 
 int main(void)

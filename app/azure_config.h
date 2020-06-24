@@ -22,8 +22,8 @@ typedef enum
 // ----------------------------------------------------------------------------
 // Azure IoT Device information
 // ----------------------------------------------------------------------------
-#define IOT_HUB_HOSTNAME    "ConeProject.azure-devices.net"
-#define IOT_DEVICE_ID       "MySTMDevice"
-#define IOT_PRIMARY_KEY     "JWs1DZeNXd+QGmWMcfswf2XjanTA0HJI7D0O6jp+BtM="
+#define IOT_HUB_HOSTNAME    ""
+#define IOT_DEVICE_ID       ""
+#define IOT_PRIMARY_KEY     ""
 
 #endif // _AZURE_CONFIG_H
