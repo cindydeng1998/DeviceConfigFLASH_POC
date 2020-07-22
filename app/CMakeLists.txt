@@ -11,6 +11,7 @@ set(SOURCES
     console.c
     main.c
     networking.c
+    device_config.c
 )
 
 function(create_target TARGET STARTUP LINKER)

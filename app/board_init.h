@@ -8,6 +8,8 @@
 
 #include "stm32l4xx_hal.h"
 
+#include "device_config.h"
+
 extern UART_HandleTypeDef UartHandle;
 
 bool board_init(void);

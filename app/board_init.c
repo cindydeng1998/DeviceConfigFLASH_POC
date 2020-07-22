@@ -16,6 +16,7 @@
 #include "stm32l475e_iot01_magneto.h"
 
 #include "wifi.h"
+#include "device_config.h"
 
 UART_HandleTypeDef UartHandle;
 RTC_HandleTypeDef RtcHandle;
@@ -78,6 +79,20 @@ bool board_init(void)
     // Initialize timers
     InitTimers();
 
+	// Initialize FLASH memory storage
+	// verify_mem_status();  not yet implemented
+
+	char hostname[MAX_HOSTNAME_LEN] = "CindyIoTHub.azure-devices.net"; 
+	char device_id[MAX_DEVICEID_LEN] = "TestDevice";
+	char primary_key[MAX_KEY_LEN] = "P2C2c7QlR4XUKJ54lkdX7T1fTjNrF2TTBd8vTh3wDV0=";
+	
+	// while (has_credentials() != ERR_NONE)  to implement when serial works TODO
+	
+	if(save_to_flash(hostname, device_id, primary_key) == 1)
+	{
+		printf("Successfully saved credentials to flash. \n\n");
+	}
+	
     return 0;
 }
 
