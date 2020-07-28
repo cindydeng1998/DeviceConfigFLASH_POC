@@ -25,7 +25,7 @@ void tx_application_define(void* first_unused_memory);
 
 
 void azure_thread_entry(ULONG parameter)
-{
+{	
     UINT status;
 
     printf("\r\nStarting Azure thread\r\n\r\n");
@@ -66,13 +66,6 @@ void azure_thread_entry(ULONG parameter)
 		printf("Failed to start Azure IotHub\r\n");
 		return;
 	}
-	/*
-    if(!azure_iothub_run(IOT_HUB_HOSTNAME, IOT_DEVICE_ID, IOT_PRIMARY_KEY))
-    {
-        printf("Failed to start Azure IotHub\r\n");
-        return;
-    }
-    */
 }
 
 void tx_application_define(void* first_unused_memory)

@@ -8,6 +8,7 @@
 
 void save_to_flash_ST(uint8_t *data);
 void read_flash_ST(uint8_t* data);
+HAL_StatusTypeDef erase_flash_ST();
 
 void save_to_flash_ST(uint8_t *data)
 {
@@ -50,6 +51,7 @@ void save_to_flash_ST(uint8_t *data)
 		}
 	}
 	
+	// Lock flash
 	HAL_FLASH_OB_Lock();
 	HAL_FLASH_Lock();		
 		
@@ -123,16 +125,52 @@ void read_flash_ST(uint8_t* data)
 
 void verify_mem_status(void)
 {
-	// 
+	// how to verify the memory is valid
+	
 }
 
-int8_t has_credentials(void)
+bool has_credentials(void)
 {
-	int8_t ret_val = 0;
+	bool ret_val = true;
+	volatile uint32_t read_data;
+	
+	read_data = *(uint32_t*)(FLASH_STORAGE);
+	
+	if (read_data == 0xFFFFFFFF)
+	{
+		ret_val = false;
+	}
+	
 	return ret_val;
 }
 
-void erase_flash(void)
+void erase_flash()
 {
+	HAL_StatusTypeDef status;
+	status = erase_flash_ST(); // would need return error type
+}
+
+HAL_StatusTypeDef erase_flash_ST()
+{
+	// unlock flash
+	HAL_FLASH_Unlock();
+	HAL_FLASH_OB_Unlock();
 	
+	FLASH_EraseInitTypeDef EraseInitStruct;
+	EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+	EraseInitStruct.Banks = FLASH_BANK_2;
+	EraseInitStruct.Page = 0; // bank 2 page 0 is 0x80800000
+	EraseInitStruct.NbPages = 0x1;
+	
+	volatile HAL_StatusTypeDef status;
+	uint32_t PageError;
+	
+	status = HAL_FLASHEx_Erase(&EraseInitStruct, &PageError);
+	HAL_FLASH_GetError();
+	
+	// Lock flash
+	HAL_FLASH_OB_Lock();
+	HAL_FLASH_Lock();		
+	
+	return status;
 }

@@ -50,12 +50,11 @@
 // Value of empty EEPROM byte
 #define EMPTY_EEPROM_VAL 0xFF
 
-
 /* Handler for a HardFault */
 void HardFault_Handler(void);
 
 /* Checks if memory contains Azure IoT credentials*/
-int8_t has_credentials(void);
+bool has_credentials(void);
 
 /* Checks if memory is ready to use */
 void verify_mem_status(void);
