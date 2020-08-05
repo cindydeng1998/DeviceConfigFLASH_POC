@@ -100,33 +100,28 @@ static bool wifi_init(CHAR* ssid, CHAR* password, WiFi_Mode mode)
     }
 
     checkWifiVersion();
-    
-    // Connect to the specified SSID
-    int32_t wifiConnectCounter = 1;
-    printf("\tConnecting to SSID '%s'\r\n", ssid);
 	
-	//u_char ap_ssid[] = "ST_AP_Test";	
-	//u_char ap_pw[] = "password";
+	printf("Enabling WiFi SoftAP Function: Please visit http://192.168.10.1/ and follow onscreen instructions to connect to your local WiFi network. \n");
+	
+	// SoftAP configuration
+	u_char ap_ssid[] = "ST_AP_Test";	
+	u_char ap_pw[] = "password";
 	
 	
-	/*
-	while (WIFI_ConfigureAP(ap_ssid, ap_pw, security_mode, 1, 4) != WIFI_STATUS_OK)
+	if (WIFI_ConfigureAP(ap_ssid, ap_pw, WIFI_ECN_OPEN, 1, 4) != WIFI_STATUS_OK)
 	{
-		HAL_Delay(1000);
+		printf("Error: Wifi configAP error \n");
+		__BKPT(0);
+		return false;
 	}
-	*/
 	
+	if (WIFI_GetNetworkSettings() != WIFI_STATUS_OK)
+	{
+		printf("Error: Cannot get network settings \n");
+		__BKPT(0);
+		return false;
+	}
 	
-	// printf("booya");
-	
-    while (WIFI_Connect(ssid, password, security_mode) != WIFI_STATUS_OK)
-    {
-        printf("\tWiFi is unable connect to '%s', attempt = %ld\r\n", ssid, wifiConnectCounter++);
-        
-        HAL_Delay(1000);
-    }
-	
-
     printf("SUCCESS: WiFi connected to %s\r\n\r\n", ssid);
 
     printf("Initializing DHCP\r\n");

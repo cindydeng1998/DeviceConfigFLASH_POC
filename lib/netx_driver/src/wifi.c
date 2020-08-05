@@ -201,17 +201,26 @@ WIFI_Status_t WIFI_ConfigureAP(uint8_t *ssid, uint8_t *pass, WIFI_Ecn_t ecn, uin
 {
   WIFI_Status_t ret = WIFI_STATUS_ERROR;
   ES_WIFI_APConfig_t ApConfig;
+  uint32_t saved_timeout;
   
   strncpy((char*)ApConfig.SSID, (char*)ssid, ES_WIFI_MAX_SSID_NAME_SIZE);
   strncpy((char*)ApConfig.Pass, (char*)pass, ES_WIFI_MAX_PSWD_NAME_SIZE);
+	
   ApConfig.Channel = channel;
   ApConfig.MaxConnections = WIFI_MAX_CONNECTED_STATIONS;
   ApConfig.Security = (ES_WIFI_SecurityType_t)ecn;
   
+  saved_timeout = EsWifiObj.Timeout;
+	
+  EsWifiObj.Timeout = 0xC0000;
+	
   if(ES_WIFI_ActivateAP(&EsWifiObj, &ApConfig) == ES_WIFI_STATUS_OK)
   {
     ret = WIFI_STATUS_OK;
   }
+	
+  EsWifiObj.Timeout = saved_timeout;
+
   return ret;
 }
 
@@ -613,4 +622,16 @@ WIFI_Status_t WIFI_GetModuleName(char *ModuleName)
   }
   return ret;
 }
+
+WIFI_Status_t WIFI_GetNetworkSettings(void)
+{
+	WIFI_Status_t ret = WIFI_STATUS_ERROR;
+	if (ES_WIFI_GetNetworkSettings(&EsWifiObj) == ES_WIFI_STATUS_OK)
+	{
+		ret = WIFI_STATUS_OK;
+	}
+	
+	return ret;
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

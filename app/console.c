@@ -5,16 +5,6 @@
 
 #include "board_init.h"
 
-/* Define buffer size. Buffer size must be power of 2.  */
-#define CONSOLE_TX_BUFFER_SIZE  128
-#define CONSOLE_RX_BUFFER_SIZE  128
-
-static uint8_t console_rx_buffer[CONSOLE_RX_BUFFER_SIZE];
-static uint32_t console_rx_buffer_cindex;
-static volatile uint32_t console_rx_buffer_pindex;
-uint32_t console_rx_buffer_overflow;
-
-
 int __io_putchar(int ch);
 int __io_getchar(void);
 int _read(int file, char *ptr, int len);

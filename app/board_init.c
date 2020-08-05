@@ -16,7 +16,6 @@
 #include "stm32l475e_iot01_magneto.h"
 
 #include "wifi.h"
-#include "device_config.h"
 
 UART_HandleTypeDef UartHandle;
 RTC_HandleTypeDef RtcHandle;
@@ -82,27 +81,29 @@ bool board_init(void)
 	// Initialize FLASH memory storage
 	
 	// verify_mem_status();  not yet implemented
-	
 
-//	char hostname[MAX_HOSTNAME_LEN] = "CindyIoTHub.azure-devices.net"; 
-//	char device_id[MAX_DEVICEID_LEN] = "TestDevice";
-//	char primary_key[MAX_KEY_LEN] = "P2C2c7QlR4XUKJ54lkdX7T1fTjNrF2TTBd8vTh3wDV0=";
-	
-	char hostname[MAX_HOSTNAME_LEN] = ""; 
-	char device_id[MAX_DEVICEID_LEN] = "";
-	char primary_key[MAX_KEY_LEN] = "";
-	
+    DevConfig_IoT_Info_t device_info;
 	
 	if(has_credentials()) // there are credentials in flash 
 	{
-		read_flash(hostname, device_id, primary_key);
-		printf("\nCurrently device %s is connected to %s. \n", device_id, hostname);	
+		// TODO change status return
+		// read_flash(hostname, device_id, primary_key);
+		// printf("\nCurrently device %s is connected to %s. \n", device_id, hostname);	
+
+        if(read_flash(&device_info) == STATUS_OK)
+		{
+			printf("\nCurrently device %s is connected to %s. \n", device_info.device_id, device_info.hostname);
+		}
+		else
+		{
+			printf("\nError reading from flash\n");
+		}
 		
 		// Start menu option
 		int menu_option;
 		
-		printf("Press 0: Continue .\r\n");
-		printf("Press 1: Erase credentials/Reset Flash .\r\n");
+		printf("Press 0: Continue .\r\nPress 1: Erase credentials/Reset Flash .\r\n");
+        
 		if (scanf("%d", &menu_option) == 0)
 		{
 			/* Not valid input, flush stdin */
@@ -113,6 +114,11 @@ bool board_init(void)
 			erase_flash();
 		}
 	}
+
+    char hostname[MAX_HOSTNAME_LEN] = ""; 
+	char device_id[MAX_DEVICEID_LEN] = "";
+	char primary_key[MAX_KEY_LEN] = "";
+
 	while(!has_credentials())
 	{
 		printf("No Azure IoT credentials stored in device. Please enter credentials into serial terminal. \n\n");
@@ -163,7 +169,7 @@ bool board_init(void)
 			continue;
 		}
 		
-		if (save_to_flash(hostname, device_id, primary_key) == 1)
+		if (save_to_flash(hostname, device_id, primary_key) == STATUS_OK)
 		{
 			printf("Successfully saved credentials to flash. \n\n");
 		}
