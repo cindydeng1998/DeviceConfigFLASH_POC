@@ -122,7 +122,7 @@ static bool wifi_init(CHAR* ssid, CHAR* password, WiFi_Mode mode)
 		return false;
 	}
 	
-    printf("SUCCESS: WiFi connected to %s\r\n\r\n", ssid);
+    printf("SUCCESS: WiFi connected.\r\n\r\n");
 
     printf("Initializing DHCP\r\n");
 
